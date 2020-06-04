@@ -1,0 +1,62 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+. "$SCRIPT_DIR/2fa-tuner-lib/utils.sh"
+
+init
+
+set_dialog_manager "yad"
+
+if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
+then
+        install_common_packages
+	exit
+fi
+
+if [[ "$UID" -eq "0" ]]
+then
+	echo "Установка пакетов"
+	install_common_packages
+else
+	yesno "Установление обновлений" "Проверить наличие обновлений и установить их? Потребуются права администратора"
+	if  [[ $? -eq 0 ]]
+	then
+		echo "Установка пакетов"
+		pkexec "$SCRIPT" "install_packages" &
+		show_wait $! "Обновление" "Подождите, идет обновление"
+	fi
+fi
+
+token=`choose_token`
+if [ $? -ne 0 ]
+then
+	exit
+fi
+PIN=`get_token_password "$token"`
+
+menu_list="\
+Информация о токене
+Объекты на токене
+Форматировать токен
+Сменить PIN пользователя
+Сменить PIN администратора
+Разблокировать PIN пользователя\
+"
+
+cmd_list="\
+show_token_info
+show_token_object
+format_token
+change_user_pin
+change_admin_pin
+unlock_pin
+"
+
+ret=0
+while [[ "$ret" -eq 0 ]]
+do
+	show_menu "$token" "$menu_list" "$cmd_list"
+	ret=$?
+done
+
+cleanup

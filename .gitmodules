@@ -1,0 +1,3 @@
+[submodule "2fa-tuner-lib"]
+	path = 2fa-tuner-lib
+	url = https://github.com/AktivCo/2fa-tuner-lib
