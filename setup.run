@@ -4,8 +4,7 @@ SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 . "$SCRIPT_DIR/2fa-tuner-lib/utils.sh"
 
 init
-
-set_dialog_manager "yad"
+set_dialog_manager "python"
 
 if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
 then
