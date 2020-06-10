@@ -12,7 +12,7 @@ then
 	exit
 fi
 
-install_packages_for_local_auth check_updates &
+install_common_packages check_updates &
 show_wait $! "Обновление" "Проверка наличия обновлений"
 if [[ $? -eq 1 ]]
 then
