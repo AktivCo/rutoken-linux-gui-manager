@@ -12,17 +12,22 @@ then
 	exit
 fi
 
-if [[ "$UID" -eq "0" ]]
+install_packages_for_local_auth check_updates &
+show_wait $! "Обновление" "Проверка наличия обновлений"
+if [[ $? -eq 1 ]]
 then
-	echo "Установка пакетов"
-	install_common_packages
-else
-	yesno "Установление обновлений" "Проверить наличие обновлений и установить их? Потребуются права администратора"
-	if  [[ $? -eq 0 ]]
+	if [[ "$UID" -eq "0" ]]
 	then
 		echo "Установка пакетов"
-		pkexec "$SCRIPT" "install_packages" &
-		show_wait $! "Обновление" "Подождите, идет обновление"
+		install_common_packages
+	else
+		yesno "Установление обновлений" "Проверить наличие обновлений и установить их? Потребуются права администратора"
+		if  [[ $? -eq 0 ]]
+		then
+			echo "Установка пакетов"
+			pkexec "$SCRIPT" "install_packages" &
+			show_wait $! "Обновление" "Подождите, идет обновление"
+		fi
 	fi
 fi
 
