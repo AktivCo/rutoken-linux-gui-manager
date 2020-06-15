@@ -9,7 +9,7 @@ set_dialog_manager "python"
 if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
 then
         install_common_packages
-	exit
+	cleanup
 fi
 
 install_common_packages check_updates &
@@ -34,7 +34,7 @@ fi
 token=`choose_token`
 if [ $? -ne 0 ]
 then
-	exit
+	cleanup
 fi
 PIN=`get_token_password "$token"`
 
