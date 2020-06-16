@@ -13,6 +13,45 @@ then
 	exit 0
 fi
 
+if [[ "$#" -eq 2 && "$1" == "show_menu" ]]
+then
+	token="$2"
+	PIN=`get_token_password "$token"`
+	if [[ $? -ne 0 ]]
+	then
+		cleanup
+		exit 0
+	fi
+
+	menu_list="\
+Информация о токене
+Объекты на токене
+Форматировать токен
+Сменить PIN пользователя
+Сменить PIN администратора
+Разблокировать PIN пользователя\
+"
+
+	cmd_list="\
+show_token_info
+show_token_object
+format_token
+change_user_pin
+change_admin_pin
+unlock_pin
+"
+
+	ret=0
+	while [[ "$ret" -eq 0 ]]
+	do
+	        show_menu "$token" "$menu_list" "$cmd_list"
+	        ret=$?
+	done
+	
+	cleanup
+	exit
+fi
+
 install_common_packages check_updates &
 show_wait $! "Обновление" "Проверка наличия обновлений"
 if [[ $? -eq 1 ]]
@@ -38,32 +77,10 @@ then
 	cleanup
 	exit 0
 fi
-PIN=`get_token_password "$token"`
 
-menu_list="\
-Информация о токене
-Объекты на токене
-Форматировать токен
-Сменить PIN пользователя
-Сменить PIN администратора
-Разблокировать PIN пользователя\
-"
+bash "$SCRIPT" show_menu "$token" &
 
-cmd_list="\
-show_token_info
-show_token_object
-format_token
-change_user_pin
-change_admin_pin
-unlock_pin
-"
-
-ret=0
-while [[ "$ret" -eq 0 ]]
-do
-	show_menu "$token" "$menu_list" "$cmd_list"
-	ret=$?
-done
+follow_token $! "$token"
 
 cleanup
 exit 0
