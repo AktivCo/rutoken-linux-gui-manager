@@ -6,11 +6,13 @@ SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 init
 set_dialog_manager "python"
 
+function cleanup_and_exit () { cleanup; exit $1; }
+trap cleanup_and_exit SIGTERM SIGINT
+
 if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
 then
         install_common_packages
-	cleanup
-	exit 0
+	cleanup_and_exit 0
 fi
 
 if [[ "$#" -eq 2 && "$1" == "show_menu" ]]
@@ -19,8 +21,7 @@ then
 	PIN=`get_token_password "$token"`
 	if [[ $? -ne 0 ]]
 	then
-		cleanup
-		exit 0
+		cleanup_and_exit 0
 	fi
 
 	menu_list="\
@@ -48,8 +49,7 @@ unlock_pin
 	        ret=$?
 	done
 	
-	cleanup
-	exit
+	cleanup_and_exit 0
 fi
 
 install_common_packages check_updates &
@@ -71,16 +71,21 @@ then
 	fi
 fi
 
-token=`choose_token`
-if [ $? -ne 0 ]
-then
-	cleanup
-	exit 0
-fi
+trap echo SIGTERM SIGINT
 
-bash "$SCRIPT" show_menu "$token" &
+ret=1
+while [[ $ret -eq 1 ]]
+do
+	token=`choose_token`
+	if [ $? -ne 0 ]
+	then
+        	cleanup_and_exit 0
+	fi
 
-follow_token $! "$token"
+	bash "$SCRIPT" show_menu "$token" &
 
-cleanup
-exit 0
+	follow_token $! "$token"
+	ret=$?
+done
+
+cleanup_and_exit 0
