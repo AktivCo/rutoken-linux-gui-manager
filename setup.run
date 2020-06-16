@@ -10,6 +10,7 @@ if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
 then
         install_common_packages
 	cleanup
+	exit 0
 fi
 
 install_common_packages check_updates &
@@ -35,6 +36,7 @@ token=`choose_token`
 if [ $? -ne 0 ]
 then
 	cleanup
+	exit 0
 fi
 PIN=`get_token_password "$token"`
 
@@ -64,3 +66,4 @@ do
 done
 
 cleanup
+exit 0
