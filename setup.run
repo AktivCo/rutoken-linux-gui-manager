@@ -52,6 +52,13 @@ unlock_pin
 	cleanup_and_exit 0
 fi
 
+dialog_manager_enabeled
+if [[ $? -ne 0 ]]
+then
+	pkexec "$SCRIPT" "install_packages" &
+	show_wait $! "Установка" "Подождите, идет установка приложения"
+fi
+
 install_common_packages check_updates &
 show_wait $! "Обновление" "Проверка наличия обновлений"
 if [[ $? -eq 1 ]]
