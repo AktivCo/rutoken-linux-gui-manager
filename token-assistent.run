@@ -89,9 +89,12 @@ do
         	cleanup_and_exit 0
 	fi
 
+	cd "$CUR_DIR"
 	bash "$SCRIPT" show_menu "$token" &
+	menu_pid=$!
+	cd "$TMP_DIR"
 
-	follow_token $! "$token"
+	follow_token $menu_pid "$token"
 	ret=$?
 done
 
