@@ -80,8 +80,7 @@ fi
 
 trap echo SIGTERM SIGINT
 
-ret=1
-while [[ $ret -eq 1 ]]
+while true
 do
 	token=`choose_token`
 	if [ $? -ne 0 ]
@@ -95,7 +94,6 @@ do
 	cd "$TMP_DIR"
 
 	follow_token $menu_pid "$token"
-	ret=$?
 done
 
 cleanup_and_exit 0
