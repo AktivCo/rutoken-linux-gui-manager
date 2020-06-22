@@ -78,8 +78,6 @@ then
 	fi
 fi
 
-trap echo SIGTERM SIGINT
-
 while true
 do
 	token=`choose_token`
