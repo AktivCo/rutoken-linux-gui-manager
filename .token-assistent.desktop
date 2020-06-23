@@ -1,0 +1,7 @@
+[Desktop Entry]
+Version=1.0
+Name=Token Assistent
+Exec="$SCRIPT_DIR/token-assistent.run"
+Path=
+Terminal=false
+Type=Application

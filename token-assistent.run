@@ -1,0 +1,97 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+. "$SCRIPT_DIR/2fa-tuner-lib/utils.sh"
+
+init
+set_dialog_manager "python"
+
+function cleanup_and_exit () { cleanup; exit $1; }
+trap cleanup_and_exit SIGTERM SIGINT
+
+if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
+then
+        install_common_packages
+	cleanup_and_exit 0
+fi
+
+if [[ "$#" -eq 2 && "$1" == "show_menu" ]]
+then
+	token="$2"
+	PIN=`get_token_password "$token"`
+	if [[ $? -ne 0 ]]
+	then
+		cleanup_and_exit 0
+	fi
+
+	menu_list="\
+Получить информацию о Рутокене
+Просмотреть объекты на Рутокене
+Форматировать Рутокен
+Сменить PIN-код Пользователя
+Сменить PIN-код Администратора
+Разблокировать PIN-код Пользователя\
+"
+
+	cmd_list="\
+show_token_info
+show_token_object
+format_token
+change_user_pin
+change_admin_pin
+unlock_pin
+"
+
+	ret=0
+	while [[ "$ret" -eq 0 ]]
+	do
+	        show_menu "$token" "$menu_list" "$cmd_list"
+	        ret=$?
+	done
+	
+	cleanup_and_exit 0
+fi
+
+dialog_manager_enabeled
+if [[ $? -ne 0 ]]
+then
+	pkexec "$SCRIPT" "install_packages" &
+	show_wait $! "Настройка" "Подождите, идет настройка приложения"
+fi
+
+install_common_packages check_updates &
+show_wait $! "Обновление" "Проверка наличия обновлений"
+if [[ $? -eq 1 ]]
+then
+	if [[ "$UID" -eq "0" ]]
+	then
+		echo "Установка пакетов"
+		install_common_packages
+	else
+		yesno "Установление обновлений" "Проверить и установить обновления? Потребуются права администратора"
+		if  [[ $? -eq 0 ]]
+		then
+			echo "Установка пакетов"
+			pkexec "$SCRIPT" "install_packages" &
+			show_wait $! "Обновление" "Подождите, идет обновление"
+		fi
+	fi
+fi
+
+while true
+do
+	token=`choose_token`
+	if [ $? -ne 0 ]
+	then
+        	cleanup_and_exit 0
+	fi
+
+	cd "$CUR_DIR"
+	bash "$SCRIPT" show_menu "$token" &
+	menu_pid=$!
+	cd "$TMP_DIR"
+
+	follow_token $menu_pid "$token"
+done
+
+cleanup_and_exit 0
