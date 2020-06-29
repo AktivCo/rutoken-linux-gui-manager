@@ -8,12 +8,6 @@ init
 function cleanup_and_exit () { cleanup; exit $1; }
 trap cleanup_and_exit SIGTERM SIGINT
 
-if [[ "$#" -eq 1 && "$1" == "install_packages" ]]
-then
-        install_packages_for_domain_auth
-	cleanup_and_exit 0
-fi
-
 if [[ "$#" -eq 2 && "$1" == "show_menu" ]]
 then
 	token="$2"
@@ -56,7 +50,7 @@ fi
 dialog_manager_enabeled
 if [[ $? -ne 0 ]]
 then
-	pkexec "$SCRIPT" "install_packages" &
+	sudo_cmd install_packages_for_domain_auth &
 	show_wait $! "Настройка" "Подождите, идет настройка приложения"
 fi
 
@@ -68,7 +62,7 @@ then
 	if  [[ $? -eq 0 ]]
 	then
 		echo "Установка пакетов"
-		pkexec "$SCRIPT" "install_packages_for_domain_auth" &
+		sudo_cmd install_packages_for_domain_auth &
 		show_wait $! "Обновление" "Подождите, идет обновление"
 	fi
 fi
