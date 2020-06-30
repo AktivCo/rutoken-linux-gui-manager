@@ -4,3 +4,5 @@ SCRIPT=`realpath -s "$0"`
 SCRIPT_DIR=`dirname "$SCRIPT"`
 
 SCRIPT_DIR="$SCRIPT_DIR" envsubst < "$SCRIPT_DIR/.token-assistent.desktop" > "$SCRIPT_DIR/token-assistent.desktop"
+
+echo -e "Установка ярлыка завершена. Можете закрыть программу"
