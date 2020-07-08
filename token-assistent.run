@@ -24,7 +24,8 @@ then
 Сменить PIN-код Пользователя
 Сменить PIN-код Администратора
 Разблокировать PIN-код Пользователя
-Настроить домменную аутентификацию\
+Настроить аутентификацию в домене FreeIPA
+Настроить аутентификацию в домене AD\
 "
 
 	cmd_list="\
@@ -34,7 +35,8 @@ format_token
 change_user_pin
 change_admin_pin
 unlock_pin
-setup_domain_authentication\
+setup_freeipa_domain_authentication
+setup_ad_domain_authentication\
 "
 
 	ret=0
