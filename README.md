@@ -20,7 +20,7 @@ git clone https://github.com/AktivCo/rutoken-linux-gui-manager --recursive
 В остальных операционных системах запуск можно производить двойным щелчком по утилите *token-assistent.run*.
 
 # macOS
-Перед началом работы установите последнюю версию [brew](https://brew.sh). Также нужно вручную поставить нуные пакеты для работы:
+Перед началом работы установите последнюю версию [brew](https://brew.sh). Также нужно вручную поставить нужные пакеты для работы:
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
 brew install python3 openssl libp11 opensc pcsc-lite wget pstree
